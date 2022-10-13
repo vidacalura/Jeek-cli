@@ -1,8 +1,9 @@
 Este repositório é o repositório da versão CLI do Jeek Online.
 
 
-Para a API, acesse: --
-Para a versão web, acesse: --
+Para a API, acesse: https://github.com/vidacalura/JeekAPI/
+
+Para a versão web, acesse: https://github.com/vidacalura/JeekOnlineWeb/
 
 ## Jeek
 
@@ -16,6 +17,9 @@ Se deseja aprender mais sobre o jogo, acesse o nosso canal: <a href="https://www
 
 # Jeek-cli
 
+O Jeek-cli é um side project da franquia Jeek Online que permite que você baixe e jogue Jeek diretamente 
+de seu terminal. Este projeto é feito 100% em Python com a ajuda de nossa API, e tem como objetivo 
+facilitar o desenvolvimento de IAs em um futuro próximo.
 
 #
 
