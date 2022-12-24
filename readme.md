@@ -1,9 +1,6 @@
 Este repositório é o repositório da versão CLI do Jeek Online.
 
-
-Para a API, acesse: https://github.com/vidacalura/JeekAPI/
-
-Para a versão web, acesse: https://github.com/vidacalura/JeekOnlineWeb/
+Para a versão web, acesse: https://github.com/vidacalura/Jeek-online
 
 ## Jeek
 
