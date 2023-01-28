@@ -1,5 +1,6 @@
 import sys
 
+
 # Funções
 def menu():
     modo = ""
@@ -14,7 +15,7 @@ def menu():
         )
 
         if modo.lower() == "l":
-            jogoLocal()
+            jogo_local()
         elif modo.lower() == "on":
             # Modo online
             print("\nModo ainda não disponível.\n")
@@ -24,7 +25,8 @@ def menu():
         else:
             print("\nArgumento inválido\n")          
 
-def mostrarTabuleiro(tabuleiro):
+
+def mostrar_tabuleiro(tabuleiro):
     counter = 1
 
     for i in tabuleiro:
@@ -36,8 +38,9 @@ def mostrarTabuleiro(tabuleiro):
 
     print("\n  a b c d")
 
-def converterLance(l):
-    lancesConvertidos = []
+
+def converter_lance(l):
+    lances_convertidos = []
 
     if l == "q" or l == "Q":
         sys.exit()
@@ -47,77 +50,108 @@ def converterLance(l):
         return None
 
     for i in l:
+        if len(i) != 2:
+            print("\nLance inválido\n")
+            return None
         if i[0] == "a" or i[0] == "b" or i[0] == "c" or i[0] == "d":
-            lancesConvertidos.append([ord(i[0]) - 97, int(i[1]) - 1])
+            lances_convertidos.append([ord(i[0]) - 97, int(i[1]) - 1])
         else:
             print("\nLance inválido\n")
             return None
 
-    return lancesConvertidos
+    return lances_convertidos
 
-def validarLance(l):
+
+def validar_lance(l, tabuleiro):
 
     if len(l) > 3:
         print("\nLance inválido\n")
         return False
 
+    # Verifica lance espelhado
+
+
+    # Verifica se casa já foi preenchida
+    for i in l:
+        if tabuleiro[i[1]][i[0]] != ".":
+            return False
+                
+    # Verifica se o lance é legal
+    comum = ""
+    for i in l:
+        if comum == "":
+            comum = list(i)
+        else:
+            if i[0] == comum[0]:
+                comum[0] = i[0]
+                comum[1] = ""
+            elif i[1] == comum[1]:
+                comum[1] = i[1]
+                comum[0] = ""
+            else:
+                return False
+
     return True
 
-def jogoLocal():
 
+def count_pecas(tabuleiro):
+    count = 0
+        for i in tabuleiro:
+            for j in i:
+                if j != ".":
+                    count += 1
+
+
+def jogo_local():
+    
     tabuleiro = [
         [".", ".", ".", "."],
         [".", ".", ".", "."],
         [".", ".", ".", "."],
         [".", ".", ".", "."]
     ]
-    jogadorTurno = "B"
+
+    jogador_turno = "B"
 
     def restart():
         for i in range(len(tabuleiro)):
             for j in range(len(tabuleiro[i])):
                 tabuleiro[i][j] = "."
 
-        jogadorTurno = "P"
+        jogador_turno = "P"
 
-    def fimDeJogo():
-        mostrarTabuleiro(tabuleiro)
-        print("Fim de jogo. " + jogadorTurno + " ganham!")
+    def fim_de_jogo():
+        mostrar_tabuleiro(tabuleiro)
+        print("Fim de jogo. " + jogador_turno + " ganham!")
         restart()
 
     def desistir():
-        fimDeJogo()
+        fim_de_jogo()
 
     while 1:
         # Mostrar tabuleiro
-        mostrarTabuleiro(tabuleiro)
+        mostrar_tabuleiro(tabuleiro)
 
         # Receber lance
         lance = input().split(" ")
-        lance = converterLance(lance)
+        lance = converter_lance(lance)
 
         if lance != None:
             # Validar lance
-            if validarLance(lance):
+            if validar_lance(lance, tabuleiro):
                 # Registrar lance
                 for i in lance:
-                    tabuleiro[i[1]][i[0]] = jogadorTurno
+                    tabuleiro[i[1]][i[0]] = jogador_turno
 
                 # Verificar se jogo acabou
-                count = 0
-                for i in tabuleiro:
-                    for j in i:
-                        if j != ".":
-                            count += 1
-
-                if count == 15:
-                    fimDeJogo()
+                if count_pecas(tabuleiro) == 15:
+                    fim_de_jogo()
 
                 # Passar vez
-                if jogadorTurno == "B":
-                    jogadorTurno = "P"
+                if jogador_turno == "B":
+                    jogador_turno = "P"
                 else:
-                    jogadorTurno = "B"
+                    jogador_turno = "B"
 
 
 # Programa
