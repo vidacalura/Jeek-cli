@@ -79,7 +79,7 @@ class Jogo:
             [0, 1], [1, 2], [2, 3],
             [0, 1, 2], [1, 2, 3]
         ]
-        
+
         nao_comum_lista = []
         if comum[1] == '':
             for i in movimento:
@@ -106,13 +106,13 @@ class Jogo:
 
     def verificar_vitoria(self):
         if self.get_count_pecas() == 15:
-            return self.turno
-
-        elif self.get_count_pecas() > 15:
             if self.turno == "B":
                 return "P"
             else:
                 return "B"
+
+        elif self.get_count_pecas() > 15:
+            return self.turno
 
         else:
             return None
@@ -157,20 +157,37 @@ def tirar_lado():
 print("""Jeek-CLI v.0.0.2
 * Feito por Vidacalura *
 
-Iniciando jogo contra Jeekens (0)""")
+Iniciando jogo contra Jeekens (400)""")
 
 jogo = Jogo()
 humano, jeekens = tirar_lado()
 
+random_moves = [
+    "a1", "a2", "a3", "a4",
+    "b1", "b2", "b3", "b4",
+    "c1", "c2", "c3", "c4",
+    "d1", "d2", "d3", "d4",
+    "a1 a2", "a2 a3", "a3 a4",
+    "b1 b2", "b2 b3", "b3 b4",
+    "c1 c2", "c2 c3", "c3 c4",
+    "d1 d2", "d2 d3", "d3 d4",
+    "a1 a2 a3", "a2 a3 a4",
+    "b1 b2 b3", "b2 b3 b4",
+    "c1 c2 c3", "c2 c3 c4",
+    "d1 d2 d3", "d2 d3 d4",
+]
+
 # loop do jogo
 while 1:
+    shuffle(random_moves)
+
     movimento = None
     if jogo.turno == humano:
         movimento = input("\nSua vez: ").split(" ")
     
     else:
-        # Jeekens faz lance
-        pass
+        # Jeekens faz um movimento
+        movimento = random_moves[0].split(" ")
 
     jogo.registrar_movimento(movimento)
 
