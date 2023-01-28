@@ -55,7 +55,10 @@ class Jogo:
         for i in movimento:
             if self.tabuleiro[i[1]][i[0]] != ".":
                 return False
-                    
+
+        if len(movimento) == 1:
+            return True            
+        
         # Verifica se o lance é legal
         comum = ""
         for i in movimento:
@@ -70,6 +73,23 @@ class Jogo:
                     comum[0] = ""
                 else:
                     return False
+
+        # Verifica se peças estão conectadas
+        movimentos_ok_lista = [
+            [0, 1], [1, 2], [2, 3],
+            [0, 1, 2], [1, 2, 3]
+        ]
+        
+        nao_comum_lista = []
+        if comum[1] == '':
+            for i in movimento:
+                nao_comum_lista.append(i[1])
+        else:
+            for i in movimento:
+                nao_comum_lista.append(i[0])
+
+        if nao_comum_lista not in movimentos_ok_lista:
+            return False
 
         return True
 
@@ -134,7 +154,7 @@ def tirar_lado():
 
 
 # Início do programa
-print("""Jeek-CLI v.0.0.1
+print("""Jeek-CLI v.0.0.2
 * Feito por Vidacalura *
 
 Iniciando jogo contra Jeekens (0)""")
