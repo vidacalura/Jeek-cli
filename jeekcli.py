@@ -1,5 +1,8 @@
 from random import shuffle
 from sys import exit
+import sys
+
+sys.setrecursionlimit(1500000)
 
 class Jogo:
     def __init__(self):
@@ -49,7 +52,24 @@ class Jogo:
             return False
 
         # Verifica lance espelhado
+        if len(self.movimentos) == 1:
+            movimento_brancas = converter_movimento(self.movimentos[0])
 
+            if len(movimento_brancas) == len(movimento):
+                if len(movimento_brancas) == 1:
+                    if movimento_brancas[0][0] + movimento_brancas[0][1] + movimento[0][0] + movimento[0][1] == 6:
+                        return False
+
+                elif len(movimento_brancas) == 2:
+                    if (movimento_brancas[0][0] + movimento_brancas[0][1] + movimento[0][0] + movimento[0][1]
+                    + movimento_brancas[1][0] + movimento_brancas[1][1] + movimento[1][0] + movimento[1][1] == 12):
+                        return False
+
+                elif len(movimento_brancas) == 3:
+                    if (movimento_brancas[0][0] + movimento_brancas[0][1] + movimento[0][0] + movimento[0][1]
+                    + movimento_brancas[1][0] + movimento_brancas[1][1] + movimento[1][0] + movimento[1][1]
+                    + movimento_brancas[2][0] + movimento_brancas[2][1] + movimento[2][0] + movimento[2][1] == 18):
+                        return False 
 
         # Verifica se casa já foi preenchida
         for i in movimento:
@@ -77,7 +97,13 @@ class Jogo:
         # Verifica se peças estão conectadas
         movimentos_ok_lista = [
             [0, 1], [1, 2], [2, 3],
-            [0, 1, 2], [1, 2, 3]
+            [1, 0], [2, 1], [3, 2],
+            [0, 1, 2], [1, 2, 3],
+            [1, 0, 2], [2, 1, 3],
+            [2, 1, 0], [3, 2, 1],
+            [1, 2, 0], [2, 3, 1],
+            [2, 3, 1], [3, 1, 2],
+            [3, 2, 1], [1, 3, 2],
         ]
 
         nao_comum_lista = []
@@ -153,8 +179,12 @@ def tirar_lado():
     return lados[0], lados[1]
 
 
+def jeekens_movimento():
+    return "a1 a2 a3"
+
+
 # Início do programa
-print("""Jeek-CLI v.0.0.2
+print("""Jeek-CLI v.0.0.3
 * Feito por Vidacalura *
 
 Iniciando jogo contra Jeekens (400)""")
@@ -162,7 +192,7 @@ Iniciando jogo contra Jeekens (400)""")
 jogo = Jogo()
 humano, jeekens = tirar_lado()
 
-random_moves = [
+todos_movimentos = [
     "a1", "a2", "a3", "a4",
     "b1", "b2", "b3", "b4",
     "c1", "c2", "c3", "c4",
@@ -179,15 +209,13 @@ random_moves = [
 
 # loop do jogo
 while 1:
-    shuffle(random_moves)
-
     movimento = None
     if jogo.turno == humano:
         movimento = input("\nSua vez: ").split(" ")
     
     else:
         # Jeekens faz um movimento
-        movimento = random_moves[0].split(" ")
+        movimento = jeekens_movimento().split(" ")
 
     jogo.registrar_movimento(movimento)
 
