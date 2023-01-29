@@ -182,36 +182,51 @@ def tirar_lado():
 
 def jeekens_movimento():
     movimentos_legais = deepcopy(todos_movimentos)
-    melhor_pontuacao = -1
+    melhor_pontuacao = None
     melhor_movimento = None
 
-    for m in movimentos_legais:
-        if jogo.validar_movimento(m.split(" ")) == False:
-            movimentos_legais.remove(m)
+    movimentos_aberturas = ["a1", "a2", "a3", "a4", "b1", "b2", "b3", "b4", "c2 c3", "b2 b3"]
+
+    if len(jogo.movimentos) == 0:
+        shuffle(movimentos_aberturas)
+        return movimentos_aberturas[0]
+
+    if jeekens == "B":
+        melhor_pontuacao = -1
+    else:
+        melhor_pontuacao = 2
+
+    i = 0
+    while i < len(movimentos_legais):
+        if jogo.validar_movimento(movimentos_legais[i].split(" ")) == False:
+            movimentos_legais.remove(movimentos_legais[i])
         else:
+            jogo_simul = deepcopy(jogo)
+            jogo_simul.registrar_movimento(movimentos_legais[i].split(" "))
+            m = movimentos_legais[i]
             if jeekens == "B":
-                pontuacao_movimento = minimax(m, 3, True)
+                pontuacao_movimento = minimax(jogo_simul, profundidade_jeekens, False)
                 if pontuacao_movimento > melhor_pontuacao:
                     melhor_pontuacao = pontuacao_movimento
                     melhor_movimento = m
             else:
-                pontuacao_movimento = minimax(m, 3, False)
-                if pontuacao_movimento > melhor_pontuacao:
+                pontuacao_movimento = minimax(jogo_simul, profundidade_jeekens, True)
+                if pontuacao_movimento < melhor_pontuacao:
                     melhor_pontuacao = pontuacao_movimento
                     melhor_movimento = m
+        
+            i += 1
     
     if melhor_movimento == None:
+        shuffle(movimentos_legais)
         melhor_movimento = movimentos_legais[0] 
 
     return melhor_movimento
 
 
-def minimax(movimento, profundidade, is_brancas):
-    jogo_simul = deepcopy(jogo)
-    jogo_simul.registrar_movimento(movimento.split(" "))
-
+def minimax(jogo_copia, profundidade, is_brancas):
     # Verifica vitória
-    jogador_vitorioso = jogo_simul.verificar_vitoria()
+    jogador_vitorioso = jogo_copia.verificar_vitoria()
     if jogador_vitorioso == humano:
         return 0
     elif jogador_vitorioso == jeekens:
@@ -225,20 +240,26 @@ def minimax(movimento, profundidade, is_brancas):
         melhor_pontuacao = -1
         melhor_movimento = None
 
-        for m in movimentos_legais:
-            if jogo_simul.validar_movimento(m.split(" ")) == False:
+        i = 0
+        while i < len(movimentos_legais):
+            m = movimentos_legais[i]
+            if jogo_copia.validar_movimento(m.split(" ")) == False:
                 movimentos_legais.remove(m)
             else:
+                jogo_simul = deepcopy(jogo_copia)
+                jogo_simul.registrar_movimento(m.split(" "))
                 if jeekens == "B":
-                    pontuacao_movimento = minimax(m, profundidade - 1, False)
+                    pontuacao_movimento = minimax(jogo_simul, profundidade - 1, False)
                     if pontuacao_movimento > melhor_pontuacao:
                         melhor_pontuacao = pontuacao_movimento
                         melhor_movimento = m
                 else:
-                    pontuacao_movimento = minimax(m, profundidade - 1, True)
+                    pontuacao_movimento = minimax(jogo_simul, profundidade - 1, True)
                     if pontuacao_movimento < melhor_pontuacao:
                         melhor_pontuacao = pontuacao_movimento
                         melhor_movimento = m
+
+                i += 1
 
         return melhor_pontuacao
 
@@ -247,33 +268,35 @@ def minimax(movimento, profundidade, is_brancas):
         melhor_pontuacao = 1
         melhor_movimento = None
 
-        for m in movimentos_legais:
-            if jogo_simul.validar_movimento(m.split(" ")) == False:
+        i = 0
+        while i < len(movimentos_legais):
+            m = movimentos_legais[i]
+            if jogo_copia.validar_movimento(m.split(" ")) == False:
                 movimentos_legais.remove(m)
             else:
+                jogo_simul = deepcopy(jogo_copia)
+                jogo_simul.registrar_movimento(m.split(" "))
                 if jeekens == "B":
-                    pontuacao_movimento = minimax(m, profundidade - 1, True)
+                    pontuacao_movimento = minimax(jogo_simul, profundidade - 1, True)
                     if pontuacao_movimento < melhor_pontuacao:
-                        print(m)
-                        print(pontuacao_movimento)
                         melhor_pontuacao = pontuacao_movimento
                         melhor_movimento = m
                 else:
-                    pontuacao_movimento = minimax(m, profundidade - 1, False)
+                    pontuacao_movimento = minimax(jogo_simul, profundidade - 1, False)
                     if pontuacao_movimento > melhor_pontuacao:
-                        print(m)
-                        print(pontuacao_movimento)
                         melhor_pontuacao = pontuacao_movimento
                         melhor_movimento = m
+
+                i += 1
 
         return melhor_pontuacao
 
 
 # Início do programa
-print("""Jeek-CLI v.0.0.3
-* Feito por Vidacalura *
+print("Jeek-CLI v.0.0.3\n* Feito por Vidacalura *")
+profundidade_jeekens = int(input("Escolha a profundidade do Jeekens (1 a 4): "))
 
-Iniciando jogo contra Jeekens (500)""")
+print("\nIniciando jogo contra Jeekens (" + str(200 + (profundidade_jeekens - 1) * 100) + ")")
 
 jogo = Jogo()
 humano, jeekens = tirar_lado()
@@ -292,6 +315,20 @@ todos_movimentos = [
     "c1 c2 c3", "c2 c3 c4",
     "d1 d2 d3", "d2 d3 d4",
 ]
+
+#jogo = Jogo()
+#jogo.turno = "P"
+#jogo.tabuleiro = [
+#    ["B", "P", "P", "B"],
+#    [".", ".", ".", "B"],
+#    [".", ".", ".", "B"],
+#    ["B", "B", "B", "B"]
+#]
+
+#humano = "B"
+#jeekens = "P"
+
+#print(jeekens_movimento())
 
 # loop do jogo
 while 1:
